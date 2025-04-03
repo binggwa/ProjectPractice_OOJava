@@ -24,8 +24,8 @@ import parsing.ParseFeed;
 /** EarthquakeCityMap
  * An application with an interactive map displaying earthquake data.
  * Author: UC San Diego Intermediate Software Development MOOC team
- * @author Your name here
- * Date: July 17, 2015
+ * @author 이병관
+ * Date: 25.04.03
  * */
 public class EarthquakeCityMap extends PApplet {
 
@@ -77,7 +77,9 @@ public class EarthquakeCityMap extends PApplet {
 	    // to create a new SimplePointMarker for each PointFeature in 
 	    // earthquakes.  Then add each new SimplePointMarker to the 
 	    // List markers (so that it will be added to the map in the line below)
-	    
+	    for ( PointFeature Eqs : earthquakes ) {
+	    	markers.add(createMarker(Eqs));
+	    }
 	    
 	    // Add the markers to the map so that they are displayed
 	    map.addMarkers(markers);
@@ -108,6 +110,8 @@ public class EarthquakeCityMap extends PApplet {
 		// Here is an example of how to use Processing's color method to generate 
 	    // an int that represents the color yellow.  
 	    int yellow = color(255, 255, 0);
+	    int red = color(255, 0, 0);
+	    int blue = color(0, 0, 255);
 		
 		// TODO (Step 4): Add code below to style the marker's size and color 
 	    // according to the magnitude of the earthquake.  
@@ -116,7 +120,16 @@ public class EarthquakeCityMap extends PApplet {
 	    // Rather than comparing the magnitude to a number directly, compare 
 	    // the magnitude to these variables (and change their value in the code 
 	    // above if you want to change what you mean by "moderate" and "light")
-	    
+	    if ( mag >= THRESHOLD_MODERATE ) {
+	    	marker.setRadius(15.0f);
+	    	marker.setColor(red);
+	    } else if ( mag < THRESHOLD_LIGHT ) {
+	    	marker.setRadius(5.0f);
+	    	marker.setColor(blue);
+	    } else {
+	    	marker.setRadius(10.0f);
+	    	marker.setColor(yellow);
+	    }
 	    
 	    // Finally return the marker
 	    return marker;
@@ -134,6 +147,25 @@ public class EarthquakeCityMap extends PApplet {
 	private void addKey() 
 	{	
 		// Remember you can use Processing's graphics methods here
-	
+		fill(200);
+		rect(50,50,150,250,28);
+		
+		fill(0);
+		textAlign(LEFT, CENTER);
+		textSize(13);
+		text("Earthquake Key", 75, 75);
+		
+		fill(color(255, 0, 0));
+		ellipse(75, 125, 15, 15);
+		fill(color(255, 255, 0));
+		ellipse(75, 175, 10, 10);
+		fill(color(0, 0, 255));
+		ellipse(75, 225, 5, 5);
+		
+		fill(72,241,254);
+		textSize(12);
+		text("5.0+ Magnitude", 90, 125);
+		text("4.0+ Magnitude", 90, 175);
+		text("Below 4.0", 90, 225);
 	}
 }
