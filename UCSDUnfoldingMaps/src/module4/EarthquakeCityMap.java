@@ -14,14 +14,15 @@ import de.fhpotsdam.unfolding.marker.MultiMarker;
 import de.fhpotsdam.unfolding.providers.Google;
 import de.fhpotsdam.unfolding.providers.MBTilesMapProvider;
 import de.fhpotsdam.unfolding.utils.MapUtils;
+import module5.EarthquakeMarker;
 import parsing.ParseFeed;
 import processing.core.PApplet;
 
 /** EarthquakeCityMap
  * An application with an interactive map displaying earthquake data.
  * Author: UC San Diego Intermediate Software Development MOOC team
- * @author Your name here
- * Date: July 17, 2015
+ * @author 이병관
+ * Date: 25.04.04
  * */
 public class EarthquakeCityMap extends PApplet {
 	
@@ -65,7 +66,7 @@ public class EarthquakeCityMap extends PApplet {
 		size(900, 700, OPENGL);
 		if (offline) {
 		    map = new UnfoldingMap(this, 200, 50, 650, 600, new MBTilesMapProvider(mbTilesString));
-		    earthquakesURL = "2.5_week.atom";  // The same feed, but saved August 7, 2015
+		    // earthquakesURL = "2.5_week.atom";  // The same feed, but saved August 7, 2015
 		}
 		else {
 			map = new UnfoldingMap(this, 200, 50, 650, 600, new Google.GoogleMapProvider());
@@ -76,11 +77,11 @@ public class EarthquakeCityMap extends PApplet {
 		
 		// FOR TESTING: Set earthquakesURL to be one of the testing files by uncommenting
 		// one of the lines below.  This will work whether you are online or offline
-		//earthquakesURL = "test1.atom";
-		//earthquakesURL = "test2.atom";
+		// earthquakesURL = "test1.atom";
+		// earthquakesURL = "test2.atom";
 		
 		// WHEN TAKING THIS QUIZ: Uncomment the next line
-		//earthquakesURL = "quiz1.atom";
+		earthquakesURL = "quiz1.atom";
 		
 		
 		// (2) Reading in earthquake data and geometric properties
@@ -170,7 +171,7 @@ public class EarthquakeCityMap extends PApplet {
 		// If isInCountry ever returns true, isLand should return true.
 		for (Marker m : countryMarkers) {
 			// TODO: Finish this method using the helper method isInCountry
-			
+				return isInCountry(earthquake, m);
 		}
 		
 		
@@ -210,6 +211,24 @@ public class EarthquakeCityMap extends PApplet {
 		//  * If you know your Marker, m, is a LandQuakeMarker, then it has a "country" 
 		//      property set.  You can get the country with:
 		//        String country = (String)m.getProperty("country");
+		int totalWaterQuakes = quakeMarkers.size();
+		for (Marker cm : countryMarkers) {
+			String countryName = cm.getStringProperty("name");
+			int QuakeCounter = 0;
+			for (Marker marker : quakeMarkers) {
+				EarthquakeMarker eqMarker = (EarthquakeMarker)marker;
+				if (eqMarker.isOnLand()) {
+					if (countryName.equals(eqMarker.getStringProperty("country"))) {
+						QuakeCounter++;
+					}
+				}
+			}
+			if (QuakeCounter > 0) {
+				totalWaterQuakes -= QuakeCounter;
+				System.out.println(countryName + ": " + QuakeCounter);
+			}
+		}
+		System.out.println("OCEAN QUAKES: " + totalWaterQuakes);
 		
 		
 	}

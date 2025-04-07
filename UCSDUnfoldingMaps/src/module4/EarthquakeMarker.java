@@ -7,7 +7,8 @@ import processing.core.PGraphics;
 /** Implements a visual marker for earthquakes on an earthquake map
  * 
  * @author UC San Diego Intermediate Software Development MOOC team
- * @author Your name here
+ * @author 이병관
+ * Date: 25.04.07
  *
  */
 public abstract class EarthquakeMarker extends SimplePointMarker
@@ -18,7 +19,7 @@ public abstract class EarthquakeMarker extends SimplePointMarker
 
 	// SimplePointMarker has a field "radius" which is inherited
 	// by Earthquake marker:
-	// protected float radius;
+	protected float radius;
 	//
 	// You will want to set this in the constructor, either
 	// using the thresholds below, or a continuous function
@@ -37,7 +38,6 @@ public abstract class EarthquakeMarker extends SimplePointMarker
 	public static final float THRESHOLD_DEEP = 300;
 
 	// ADD constants for colors
-
 	
 	// abstract method implemented in derived classes
 	public abstract void drawEarthquake(PGraphics pg, float x, float y);
@@ -81,6 +81,14 @@ public abstract class EarthquakeMarker extends SimplePointMarker
 	// You might find the getters below helpful.
 	private void colorDetermine(PGraphics pg) {
 		//TODO: Implement this method
+		float depth = getDepth();
+		if (depth < THRESHOLD_INTERMEDIATE) {
+			pg.fill(255, 255, 0);
+		} else if (depth < THRESHOLD_DEEP) {
+			pg.fill(0, 0, 255);
+		} else {
+			pg.fill(255, 0, 0);
+		}
 	}
 	
 	
@@ -109,6 +117,4 @@ public abstract class EarthquakeMarker extends SimplePointMarker
 	{
 		return isOnLand;
 	}
-	
-	
 }
