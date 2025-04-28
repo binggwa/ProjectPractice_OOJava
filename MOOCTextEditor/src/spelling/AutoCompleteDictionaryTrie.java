@@ -1,9 +1,6 @@
 package spelling;
 
 import java.util.List;
-import java.util.Set;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedList;
 
 /** 
@@ -14,7 +11,7 @@ import java.util.LinkedList;
 public class AutoCompleteDictionaryTrie implements  Dictionary, AutoComplete {
 
     private TrieNode root;
-    private int size;
+    private int size = 0;
     
 
     public AutoCompleteDictionaryTrie()
@@ -40,7 +37,21 @@ public class AutoCompleteDictionaryTrie implements  Dictionary, AutoComplete {
 	public boolean addWord(String word)
 	{
 	    //TODO: Implement this method.
-	    return false;
+		String lowWord = word.toLowerCase();
+		if ( this.isWord(lowWord) ) {
+			return false;
+		}
+		TrieNode curr = root;
+		for ( int i = 0; i < lowWord.length(); i++ ) {
+			char c = lowWord.charAt(i);
+			if( curr.getChild(c) == null ) {
+				curr.insert(c);
+			}
+			curr = curr.getChild(c);
+		}
+		curr.setEndsWord(true);
+		size++;
+	    return true;
 	}
 	
 	/** 
@@ -50,7 +61,7 @@ public class AutoCompleteDictionaryTrie implements  Dictionary, AutoComplete {
 	public int size()
 	{
 	    //TODO: Implement this method
-	    return 0;
+	    return size;
 	}
 	
 	
@@ -60,7 +71,16 @@ public class AutoCompleteDictionaryTrie implements  Dictionary, AutoComplete {
 	public boolean isWord(String s) 
 	{
 	    // TODO: Implement this method
-		return false;
+		String sLC = s.toLowerCase();
+		TrieNode curr = root;
+		for ( int i = 0; i < sLC.length(); i++ ) {
+			char c = sLC.charAt(i);
+			if( curr.getChild(c) == null ) {
+				return false;
+			}
+			curr = curr.getChild(c);
+		}
+		return curr.endsWord();
 	}
 
 	/** 
@@ -90,18 +110,44 @@ public class AutoCompleteDictionaryTrie implements  Dictionary, AutoComplete {
     	 // This method should implement the following algorithm:
     	 // 1. Find the stem in the trie.  If the stem does not appear in the trie, return an
     	 //    empty list
+    	 prefix = prefix.toLowerCase();
+    	 char [] wordArr = prefix.toCharArray();
+ 	     TrieNode lastNode = root;
+ 		 for (char ch: wordArr) {
+ 			if(lastNode == null) {
+  				return new LinkedList<String>();
+  			} else {
+ 				lastNode = lastNode.getChild(ch);
+ 			}
+ 		 }
     	 // 2. Once the stem is found, perform a breadth first search to generate completions
     	 //    using the following algorithm:
     	 //    Create a queue (LinkedList) and add the node that completes the stem to the back
     	 //       of the list.
+ 		 LinkedList<TrieNode> queue = new LinkedList<TrieNode>();
+		 queue.add(lastNode);
     	 //    Create a list of completions to return (initially empty)
+		 LinkedList<String> completions = new LinkedList<String>();
     	 //    While the queue is not empty and you don't have enough completions:
+		 while( queue.size() != 0 && completions.size() < numCompletions ) {
     	 //       remove the first Node from the queue
+			TrieNode opt = queue.removeFirst();
+			String text = opt.getText();
     	 //       If it is a word, add it to the completions list
+			if( opt.endsWord() ) {
+				completions.add(text);
+			}
     	 //       Add all of its child nodes to the back of the queue
+			if( opt != null ) {
+				for (Character c : opt.getValidNextCharacters()) 
+				{
+					TrieNode next = opt.getChild(c);
+					queue.add(next);
+				}
+			}
+		 }
     	 // Return the list of completions
-    	 
-         return null;
+		 return completions;
      }
 
  	// For debugging
